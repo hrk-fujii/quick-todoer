@@ -4,38 +4,51 @@ import * as fireStore from "firebase/firestore";
 import {task} from "../../defines/types";
 import {ScrollView} from "native-base";
 import Todo from "./Todo";
+import TodoEditor from "../todoEditor/todoEditor";
 
 const TodoViewer = () => {
-    const [schedules, setSchedules] = React.useState<object>({});
+    const [tasks, setTasks] = React.useState<object>({});
     
     const user = firebaseAuth.getAuth().currentUser;
     const db = fireStore.getFirestore();
 
-    const getSchedules = async () => {
-        const schedulesResult = await fireStore.getDocs(fireStore.collection(db, "users/" + user?.uid + "/schedules"));
-        let returnData = {};
-        schedulesResult.forEach(element => {
-            returnData[element.id] = element.data;
+    const hChangeTasks = (docs: fireStore.QuerySnapshot) => {
+        if (docs.metadata.hasPendingWrites) {
+            return;
+        }
+
+        let setData = {};
+        docs.forEach(element => {
+            let todoData = element.data();
+            todoData.deadlineAt = todoData.deadlineAt.toDate();
+            todoData.updatedAt = todoData.updatedAt.toDate();
+            todoData.createdAt = todoData.createdAt.toDate();
+            setData[element.id] = todoData;
         });
-        return returnData;
+        setTasks(setData);
     }
     
     React.useEffect(() => {
-        getSchedules().then((data) => {
-            setSchedules(data);
-        });
+        const tasksRef = fireStore.collection(db, "users/" + user?.uid + "/tasks");
+        const unSubscribe = fireStore.onSnapshot(tasksRef, {
+            includeMetadataChanges: true
+        }, hChangeTasks);
+
+        return unSubscribe;
     }, []);
     
     let todoList: React.FC[] = [];
 
-    for (const [key, val] of Object.entries(schedules)) {
-        todoList.push(<Todo data={val} id={key} />);
+    for (const [key, val] of Object.entries(tasks)) {
+        todoList.push(<Todo data={val} id={key} key={"tasks_" + key} />);
     }
 
     
     return <ScrollView>
+        <TodoEditor />
         {todoList}
     </ScrollView>
+    
 }
 
 export default TodoViewer;
