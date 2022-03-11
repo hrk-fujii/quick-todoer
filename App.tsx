@@ -1,4 +1,5 @@
 import React from 'react';
+import {SSRProvider} from "@react-aria/ssr";
 import { extendTheme, NativeBaseProvider, Box } from "native-base";
 import * as expoWebBrowser from 'expo-web-browser';
 import * as firebaseApp from "firebase/app";
@@ -31,11 +32,13 @@ function App() {
     }
   });
 
-  return <NativeBaseProvider theme={customTheme}>
-    <Box flex={1} _dark={{bg: "black"}}>
-      {authorized ? <MainContainer /> : <GoogleSignin />}
-    </Box>
-    </NativeBaseProvider>;
+  return <SSRProvider>
+    <NativeBaseProvider theme={customTheme}>
+      <Box flex={1} _dark={{bg: "black"}}>
+        {authorized ? <MainContainer /> : <GoogleSignin />}
+      </Box>
+    </NativeBaseProvider>
+  </SSRProvider>;
 }
 
 export default App;

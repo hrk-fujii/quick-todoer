@@ -18,7 +18,10 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@react-aria/ssr": "^3.1.2",
     "expo": "~42.0.0",
+    "expo-auth-session": "~3.3.1",
+    "expo-random": "~11.2.0",
     "expo-status-bar": "~1.0.4",
     "expo-system-ui": "^1.1.1",
     "expo-web-browser": "~9.2.0",
@@ -29,9 +32,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-42.0.0.tar.gz",
     "react-native-safe-area-context": "3.2.0",
     "react-native-svg": "12.1.1",
-    "react-native-web": "~0.13.12",
-    "expo-auth-session": "~3.3.1",
-    "expo-random": "~11.2.0"
+    "react-native-web": "~0.13.12"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
