@@ -4,7 +4,6 @@ import * as fireStore from "firebase/firestore";
 import {task} from "../../defines/types";
 import {ScrollView} from "native-base";
 import Todo from "./Todo";
-import TodoEditor from "../todoEditor/todoEditor";
 
 const TodoViewer = () => {
     const [tasks, setTasks] = React.useState<object>({});
@@ -45,7 +44,6 @@ const TodoViewer = () => {
 
     
     return <ScrollView>
-        <TodoEditor />
         {todoList}
     </ScrollView>
     

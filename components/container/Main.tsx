@@ -2,6 +2,7 @@ import React from "react";
 import Loading from "./Loading";
 import Signup from "../authentication/Signup";
 import TodoViewer from "../todoViewer/TodoViewer";
+import TodoEditor from "../todoEditor/TodoEditor";
 import * as types from "../../defines/types"
 import { HStack, VStack, Text} from "native-base";
 import * as firebaseAuth from "firebase/auth";
@@ -41,8 +42,10 @@ const MainContainer = () => {
     }
     
     return <VStack m={5} mt={10}>
-        <Text>{uid}</Text>
-        <Text>{JSON.stringify(userData)}</Text>
+        <HStack justifyContent="space-between">
+            <Text>Quick Todoer</Text>
+            <TodoEditor />
+        </HStack>
         <TodoViewer />
     </VStack>
 }
