@@ -18,7 +18,10 @@
     ],
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "infoPlist":{
+        "CFBundleDevelopmentRegion":"ja_JP"
+      }
     },
     "android": {
       "adaptiveIcon": {

@@ -4,12 +4,19 @@ import Signup from "../authentication/Signup";
 import TodoViewer from "../todoViewer/TodoViewer";
 import TodoEditor from "../todoEditor/TodoEditor";
 import * as types from "../../defines/types"
-import { HStack, VStack, Text} from "native-base";
+import {modalShow_TodoEditModal} from "../../defines/atoms";
+import { RecoilBridge, useRecoilValue } from "recoil";
+import { Box, HStack, VStack, Text} from "native-base";
 import * as firebaseAuth from "firebase/auth";
 import * as fireStore from "firebase/firestore";
 import { setDoc } from "firebase/firestore";
 
+import TodoEditModal from "../modal/TodoEditModal";
+
+
 const MainContainer = () => {
+    const showTodoEditModal = useRecoilValue(modalShow_TodoEditModal);
+    
     const [userData, setUserData] = React.useState<types.user | null>(null);
     const [dbStatus, setDbStatus] = React.useState<string>("loading");
 
@@ -42,12 +49,13 @@ const MainContainer = () => {
     }
     
     return <VStack m={5} mt={10}>
-        <HStack justifyContent="space-between">
-            <Text>Quick Todoer</Text>
+        <HStack alignItems="center" _dark={{bg: "rgb(255,0,0)"}} _light={{color: "rgb(255,255,255)", bg: "rgb(255,0,0"}} justifyContent="space-between">
+            <Text ml={2} fontSize="xl">Quick Todoer</Text>
             <TodoEditor />
         </HStack>
         <TodoViewer />
-    </VStack>
+        <Box overflow="hidden" accessibilityElementsHidden={!showTodoEditModal} accessibilityViewIsModal={showTodoEditModal}><Text height="1px"> </Text><TodoEditModal /></Box>
+    </VStack>;
 }
 
 export default MainContainer;
