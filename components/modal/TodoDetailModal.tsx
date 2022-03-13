@@ -43,7 +43,7 @@ const TodoDetailModal = () => {
                 <Button m={2}>
                     編集
                 </Button>
-                <Button m={2}>
+                <Button onPress={() => {setData({...data, show: false})}} m={2}>
                     閉じる
                 </Button>
             </Modal.Footer>
