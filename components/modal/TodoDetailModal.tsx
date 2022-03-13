@@ -1,10 +1,24 @@
 import React from "react";
 import {Modal, Text, Button} from "native-base";
-import {useRecoilValue, useSetRecoilState} from "recoil";
-import {modalData_TodoDetailModal} from "../../defines/atoms";
+import {useRecoilState} from "recoil";
+import {modalData_YesNoModalDialog, modalData_TodoDetailModal} from "../../defines/atoms";
 
 const TodoDetailModal = () => {
-    const data = useRecoilValue(modalData_TodoDetailModal);
+    const [data, setData] = useRecoilState(modalData_TodoDetailModal);
+    const [yesNoDialogData, setYesNoDialogData] = useRecoilState(modalData_YesNoModalDialog);
+    
+    const hDelete = () => {
+        setData({...data, show: false});
+        setYesNoDialogData({
+            show: true,
+            message: "「" + data.name + "」を消去しますか。",
+            onSelectYes: () => {},
+            onSelectNo: () => {
+                setYesNoDialogData({...yesNoDialogData, show: false});
+                setData({...data, show: true});
+            }
+        })
+    }
     
     return <Modal isOpen={data.show} size="full">
         <Modal.Content>
@@ -20,8 +34,8 @@ const TodoDetailModal = () => {
                 <Text>最終更新日時： {data.updatedAt.toLocaleString()}</Text>
             </Modal.Body>
             <Modal.Footer justifyContent="flex-end">
-                <Button m={2}>
-                    削除
+                <Button onPress={hDelete} m={2}>
+                    消去
                 </Button>
                 <Button accessibilityState={{disabled: (data.status === "yet")}} disabled={data.status === "yet"} m={2}>
                     未着手

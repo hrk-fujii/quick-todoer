@@ -1,5 +1,20 @@
 import {atom} from "recoil";
 
+export const modalData_YesNoModalDialog = atom<{
+    show: boolean;
+    message: string;
+    onSelectYes: () => void;
+    onSelectNo: () => void;
+}>({
+    key: "modalData_YesNoModalDialog",
+    default: {
+        show: false,
+        message: "",
+        onSelectYes: () => {return},
+        onSelectNo: () => {return}
+    }
+});
+
 export const modalShow_TodoEditModal = atom<boolean>({
     key: "modalShow_TodoEditModal",
     default: false

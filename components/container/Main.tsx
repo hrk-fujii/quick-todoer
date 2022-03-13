@@ -5,6 +5,7 @@ import TodoViewer from "../todoViewer/TodoViewer";
 import TodoEditor from "../todoEditor/TodoEditor";
 import * as types from "../../defines/types"
 import {
+    modalData_YesNoModalDialog,
     modalShow_TodoEditModal,
     modalData_TodoDetailModal
 } from "../../defines/atoms";
@@ -14,11 +15,13 @@ import * as firebaseAuth from "firebase/auth";
 import * as fireStore from "firebase/firestore";
 import { setDoc } from "firebase/firestore";
 
+import YesNoModalDialog from "../modal/YesNoModalDialog";
 import TodoEditModal from "../modal/TodoEditModal";
 import TodoDetailModal from "../modal/TodoDetailModal";
 
 
 const MainContainer = () => {
+    const yesNoModalDialogData = useRecoilValue(modalData_YesNoModalDialog);
     const showTodoEditModal = useRecoilValue(modalShow_TodoEditModal);
     const todoDetailModalData = useRecoilValue(modalData_TodoDetailModal);
     
@@ -54,7 +57,7 @@ const MainContainer = () => {
     }
     
     let modalIsOpen = false;
-    if (showTodoEditModal || todoDetailModalData.show) {
+    if (yesNoModalDialogData.show || showTodoEditModal || todoDetailModalData.show) {
         modalIsOpen = true;
     }
     
@@ -66,6 +69,7 @@ const MainContainer = () => {
         <TodoViewer />
         <Box overflow="hidden" accessibilityElementsHidden={!modalIsOpen} accessibilityViewIsModal={modalIsOpen}>
             <Text height="1px"> </Text>
+            <YesNoModalDialog />
             <TodoEditModal />
             <TodoDetailModal />
         </Box>
