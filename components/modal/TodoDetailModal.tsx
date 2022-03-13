@@ -26,7 +26,7 @@ const TodoDetailModal = () => {
                 {data.name}
             </Modal.Header>
             <Modal.Body>
-                <Text>状態： {data.status}</Text>
+                <Text>状態： {status2Message(data.status)}</Text>
                 <Text>説明：</Text>
                 <Text>{data.description}</Text>
                 <Text>期限： {data.deadlineAt.toLocaleString()}</Text>
@@ -49,6 +49,18 @@ const TodoDetailModal = () => {
             </Modal.Footer>
         </Modal.Content>
     </Modal>;
+}
+
+const status2Message = (value: string): string => {
+    if (value === "yet") {
+        return "現在、未着手です。";
+    } else if (value === "doing") {
+        return "着手しました。";
+    } else if (value === "done") {
+        return "既に完了しています。";
+    } else {
+        return "";
+    }
 }
 
 export default TodoDetailModal;
