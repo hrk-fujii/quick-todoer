@@ -12,10 +12,10 @@ const YesNoModalDialog = () => {
                 {data.message}
             </Modal.Body>
             <Modal.Footer justifyContent="flex-end">
-                <Button m={2} onPress={data.onSelectNo}>
+                <Button m={2} onPress={() => {data.onSelectNo()}} disabled={data.processing} accessibilityState={{disabled: data.processing}}>
                     いいえ
                 </Button>
-                <Button m={2} onPress={data.onSelectYes}>
+                <Button m={2} onPress={() => {data.onSelectYes()}} disabled={data.processing} accessibilityState={{disabled: data.processing}}>
                     はい
                 </Button>
             </Modal.Footer>

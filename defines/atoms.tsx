@@ -2,6 +2,7 @@ import {atom} from "recoil";
 
 export const modalData_YesNoModalDialog = atom<{
     show: boolean;
+    processing: boolean,
     message: string;
     onSelectYes: () => void;
     onSelectNo: () => void;
@@ -9,6 +10,7 @@ export const modalData_YesNoModalDialog = atom<{
     key: "modalData_YesNoModalDialog",
     default: {
         show: false,
+        processing: false,
         message: "",
         onSelectYes: () => {return},
         onSelectNo: () => {return}
