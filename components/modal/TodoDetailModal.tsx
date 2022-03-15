@@ -1,4 +1,6 @@
 import React from "react";
+import * as firebaseAuth from "firebase/auth";
+import * as fireStore from "firebase/firestore";
 import {Modal, Text, Button} from "native-base";
 import {useRecoilState} from "recoil";
 import {modalData_YesNoModalDialog, modalData_TodoDetailModal} from "../../defines/atoms";
@@ -7,12 +9,22 @@ const TodoDetailModal = () => {
     const [data, setData] = useRecoilState(modalData_TodoDetailModal);
     const [yesNoDialogData, setYesNoDialogData] = useRecoilState(modalData_YesNoModalDialog);
     
+    const user = firebaseAuth.getAuth().currentUser;
+    const db = fireStore.getFirestore();
+    
+    
     const hDelete = () => {
         setData({...data, show: false});
         setYesNoDialogData({
             show: true,
+            processing: false,
             message: "「" + data.name + "」を消去しますか。",
-            onSelectYes: () => {},
+            onSelectYes: async () => {
+                setYesNoDialogData({...yesNoDialogData, processing: true});
+                const docRef = fireStore.doc(db, "users/" + user?.uid + "/tasks/" + data.id);
+                await fireStore.deleteDoc(docRef);
+                setYesNoDialogData({...yesNoDialogData, show: false, processing: false});
+            },
             onSelectNo: () => {
                 setYesNoDialogData({...yesNoDialogData, show: false});
                 setData({...data, show: true});

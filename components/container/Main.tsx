@@ -61,8 +61,8 @@ const MainContainer = () => {
         modalIsOpen = true;
     }
     
-    return <VStack m={5} mt={10}>
-        <HStack alignItems="center" _dark={{bg: "rgb(255,0,0)"}} _light={{color: "rgb(255,255,255)", bg: "rgb(255,0,0"}} justifyContent="space-between">
+    return <VStack mt={10}>
+        <HStack alignItems="center" _dark={{bg: "rgb(255,0,0)"}} _light={{color: "rgb(255,255,255)", bg: "rgb(255,0,0)"}} justifyContent="space-between">
             <Text ml={2} fontSize="xl">Quick Todoer</Text>
             <TodoEditor />
         </HStack>

@@ -45,11 +45,10 @@ const Todo = (props: {data: task; id: string;}) => {
     }
     
     return <Box m={2} p={1} _dark={{bg:"rgb(0,0,150)"}} _light={{bg: "rgb(220,220,255)"}}>
-        <Text>{props.data.name}</Text>
-        <Text>{props.data.description}</Text>
-        <Text>期限: {props.data.deadlineAt.toLocaleString()} ({props.data.createdAt.toLocaleDateString()}作成)</Text>
+        <Text　fontSize="lg">{props.data.name}</Text>
+        <Text>{props.data.deadlineAt.toLocaleString()} まで</Text>
         <HStack justifyContent="space-between" alignItems="center">
-            <Text>状態: {statusText}</Text>
+            <Text>{statusText}</Text>
             <HStack>
                 {buttonEnabled &&
                     <Button  onPress={hStatusChange} m={1}>
@@ -58,6 +57,9 @@ const Todo = (props: {data: task; id: string;}) => {
                 }
                 <Button onPress={hOpenDetail} m={1}>
                     詳細
+                </Button    >
+                <Button onPress={hOpenDetail} m={1}>
+                    チェックリスト
                 </Button    >
             </HStack>
         </HStack>
