@@ -49,15 +49,15 @@ const EditModal = () => {
             <Modal.Body>
                 <FormControl mb={2}>
                     <Text>タイトル</Text>
-                    <Input value={name} onChangeText={(text) => {setName(text)}} />
+                    <Input onChangeText={(text) => {setName(text)}} />
                 </FormControl>
                 <FormControl mb={2}>
                     <Text>説明</Text>
-                    <TextArea height={20} value={description} onChangeText={(text) => {setDescription(text)}}></TextArea>
+                    <TextArea height={20} onChangeText={(text) => {setDescription(text)}}></TextArea>
                 </FormControl>
                 <FormControl mb={2}>
                     <Text>締め切り日時</Text>
-                    <Input value={deadlineString} onChangeText={(text) => {setDeadlineString(text)}} />
+                    <Input keyboardType="numeric" value={deadlineString} onChangeText={(text) => {setDeadlineString(text)}} />
                 </FormControl>
                 <Box>
                     <Text>締め切りに自治は、年4桁、月2桁、24時間法の時2桁、分2桁の最大12桁の数字で入力してください。なお、年、時と分、および分は省略できます。</Text>
