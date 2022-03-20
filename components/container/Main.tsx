@@ -7,7 +7,8 @@ import * as types from "../../defines/types"
 import {
     modalData_YesNoModalDialog,
     modalShow_TodoEditModal,
-    modalData_TodoDetailModal
+    modalData_TodoDetailModal,
+    modalData_CheckListModal
 } from "../../defines/atoms";
 import { RecoilBridge, useRecoilValue } from "recoil";
 import { Box, HStack, VStack, Text} from "native-base";
@@ -18,12 +19,15 @@ import { setDoc } from "firebase/firestore";
 import YesNoModalDialog from "../modal/YesNoModalDialog";
 import TodoEditModal from "../modal/TodoEditModal";
 import TodoDetailModal from "../modal/TodoDetailModal";
+import CheckListModal from "../modal/CheckListModal";
+
 
 
 const MainContainer = () => {
     const yesNoModalDialogData = useRecoilValue(modalData_YesNoModalDialog);
     const showTodoEditModal = useRecoilValue(modalShow_TodoEditModal);
     const todoDetailModalData = useRecoilValue(modalData_TodoDetailModal);
+    const checkListModalData = useRecoilValue(modalData_CheckListModal)
     
     const [userData, setUserData] = React.useState<types.user | null>(null);
     const [dbStatus, setDbStatus] = React.useState<string>("loading");
@@ -57,7 +61,7 @@ const MainContainer = () => {
     }
     
     let modalIsOpen = false;
-    if (yesNoModalDialogData.show || showTodoEditModal || todoDetailModalData.show) {
+    if (yesNoModalDialogData.show || showTodoEditModal || todoDetailModalData.show || checkListModalData.show) {
         modalIsOpen = true;
     }
     
@@ -72,6 +76,7 @@ const MainContainer = () => {
             <YesNoModalDialog />
             <TodoEditModal />
             <TodoDetailModal />
+            <CheckListModal />
         </Box>
     </VStack>;
 }

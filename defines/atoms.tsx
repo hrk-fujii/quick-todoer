@@ -46,3 +46,16 @@ export const modalData_TodoDetailModal = atom<{
         createdAt: new Date()
     }
 });
+
+export const modalData_CheckListModal = atom<{
+    show: boolean;
+    id: string;
+    name: string;
+}>({
+    key: "modalData_CheckListModal",
+    default: {
+        show: false,
+        id: "",
+        name: ""
+    }
+});

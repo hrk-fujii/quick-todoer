@@ -4,10 +4,11 @@ import * as fireStore from "firebase/firestore";
 import { Box, HStack, Text, Button } from "native-base";
 import { task } from "../../defines/types";
 import {useSetRecoilState} from "recoil";
-import {modalData_TodoDetailModal} from "../../defines/atoms";
+import {modalData_TodoDetailModal, modalData_CheckListModal} from "../../defines/atoms";
 
 const Todo = (props: {data: task; id: string;}) => {
     const setDetailModal = useSetRecoilState(modalData_TodoDetailModal);
+    const setCheckListModal = useSetRecoilState(modalData_CheckListModal);
     
     const user = firebaseAuth.getAuth().currentUser;
     const db = fireStore.getFirestore();
@@ -21,6 +22,14 @@ const Todo = (props: {data: task; id: string;}) => {
         }
     }
 
+    const hOpenCheckList = () => {
+        setCheckListModal({
+            show: true,
+            id: props.id,
+            name: props.data.name
+        })
+    }
+    
     const hOpenDetail = () => {
         setDetailModal({
             ...props.data,
@@ -58,7 +67,7 @@ const Todo = (props: {data: task; id: string;}) => {
                 <Button onPress={hOpenDetail} m={1}>
                     詳細
                 </Button    >
-                <Button onPress={hOpenDetail} m={1}>
+                <Button onPress={hOpenCheckList} m={1}>
                     チェックリスト
                 </Button    >
             </HStack>

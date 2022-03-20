@@ -7,6 +7,13 @@ export type user = {
     planDeadlineAt: Date;
 };
 
+export type checkListItem = {
+    name: string;
+    isChecked: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+};
+
 export type task = {
     name: string;
     description: string;
