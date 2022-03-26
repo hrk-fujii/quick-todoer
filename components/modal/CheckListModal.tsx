@@ -14,6 +14,7 @@ const CheckListModal = (props: {id: string; name: string;}) => {
 
     const [changed, setChanged] = React.useState<object>({});
     const [checkListData , setCheckListData] = React.useState<{id: string; data: checkListItem;}[]>([]);
+    const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [modalData, setModalData] = useRecoilState(modalData_CheckListModal);
     
     React.useEffect(() => {
@@ -60,14 +61,13 @@ const CheckListModal = (props: {id: string; name: string;}) => {
     let unCheckedListProps: React.FC[] = [];
 
     checkListData.forEach((item) => {
-        console.log(changed);
         if (item.data.isChecked) {
-            checkedListProps.push(<Checkbox defaultIsChecked key={"check_list_item_" + item.id} accessibilityLabel={item.data.name} onChange={(state) => {setChanged(val => {
+            checkedListProps.push(<Checkbox isDisabled={isLoading} defaultIsChecked key={"check_list_item_" + item.id} accessibilityLabel={item.data.name} onChange={(state) => {setChanged(val => {
                 val[item.id] = state;
                 return {...val};
             })}}>{item.data.name}</Checkbox>);
         } else {
-            unCheckedListProps.push(<Checkbox key={"check_list_item_" + item.id} accessibilityLabel={item.data.name} onChange={(state) => {setChanged(val => {
+            unCheckedListProps.push(<Checkbox isDisabled={isLoading} key={"check_list_item_" + item.id} accessibilityLabel={item.data.name} onChange={(state) => {setChanged(val => {
                 val[item.id] = state;
                 return {...val};
             })}}>{item.data.name}</Checkbox>);
@@ -89,6 +89,7 @@ const CheckListModal = (props: {id: string; name: string;}) => {
     }
 
     const hApplyChange = async () => {
+        setIsLoading(true);
         const checkListPath = "users/" + user?.uid + "/tasks/" + modalData.id + "/check_list/";
         await fireStore.runTransaction(db, async (transaction) => {
             await Object.entries(changed).forEach(async ([key, state]) => {
@@ -100,6 +101,7 @@ const CheckListModal = (props: {id: string; name: string;}) => {
             });
         });
         setChanged({});
+        setIsLoading(false);
     }
 
     return <Modal isOpen={modalData.show}>
@@ -115,10 +117,10 @@ const CheckListModal = (props: {id: string; name: string;}) => {
                 </ScrollView>
             </Modal.Body>
             <Modal.Footer>
-                <Button onPress={hNewItem} m={2}>
+                <Button isDisabled={isLoading} onPress={hNewItem} m={2}>
                     テスト値追加
                 </Button>
-                <Button onPress={hApplyChange} m={2}>
+                <Button isDisabled={isLoading} onPress={hApplyChange} m={2}>
                     変更を保存
                 </Button>
             </Modal.Footer>
