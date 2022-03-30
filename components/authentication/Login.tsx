@@ -1,10 +1,10 @@
 import React from 'react';
 import * as firebaseAuth from 'firebase/auth';
-import { Row, Center, Text, Input, Button } from "native-base";
+import { Row, Center, Text, Link, Input, Button } from "native-base";
 import { googleExpoAuthSessionProviderConfig } from '../.././config';
 
 
-const Login = () => {
+const Login = (props: {setSignup: ()=>void;}) => {
   const auth = firebaseAuth.getAuth();
   
   const [email, setEmail] = React.useState<string>("");
@@ -41,6 +41,11 @@ const Login = () => {
       <Button onPress={hSubmit}>
         ログイン
       </Button>
+    </Row>
+    <Row>
+      <Link onPress={props.setSignup}>
+        ユーザー登録してはじめる
+      </Link>
     </Row>
   </Center>
 }

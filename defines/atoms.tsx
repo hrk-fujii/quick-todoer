@@ -1,5 +1,12 @@
 import {atom} from "recoil";
 
+export const createUserData = atom<{name: string;}>({
+    key: "createUserData",
+    default: {
+        name: ""
+    }
+});
+
 export const modalData_YesNoModalDialog = atom<{
     show: boolean;
     processing: boolean,
