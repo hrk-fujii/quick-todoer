@@ -23,9 +23,7 @@ const CheckListModal = (props: {id: string; name: string;}) => {
             taskId = modalData.id;
         }
         const checkListRef = fireStore.collection(db, "users/" + user.uid + "/tasks/" + taskId + "/check_list");
-        const unSubscribe = fireStore.onSnapshot(checkListRef, {
-            includeMetadataChanges: true
-        }, hChangeCheckList);
+        const unSubscribe = fireStore.onSnapshot(checkListRef, hChangeCheckList);
     }, [modalData]);
 
     const hNewItem = () => {
@@ -39,9 +37,6 @@ const CheckListModal = (props: {id: string; name: string;}) => {
     }
     
     const hChangeCheckList = (docs: fireStore.QuerySnapshot) => {
-        if (docs.metadata.hasPendingWrites) {
-            return;
-        }
         let result: {id: string; data: checkListItem;}[] = [];
         docs.forEach((item) => {
             const itemData = item.data();

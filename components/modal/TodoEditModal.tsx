@@ -33,7 +33,7 @@ const EditModal = () => {
         };
 
         const userRef = fireStore.collection(db, "users/" + user.uid + "/tasks");
-        const result = await fireStore.addDoc(userRef, data);
+        await fireStore.addDoc(userRef, data);
         hClose();
     }
 
