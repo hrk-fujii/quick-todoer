@@ -34,7 +34,7 @@ const Login = (props: {setSignup: ()=>void;}) => {
     </Row>
     <Row>
       <Text>パスワード</Text>
-      <Input type="password" onChangeText={(t) => {setEmail(t)}} />
+      <Input type="password" onChangeText={(t) => {setPassword(t)}} />
     </Row>
     <Row>
       <Text>{errorMessage}</Text>

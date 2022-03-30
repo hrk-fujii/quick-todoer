@@ -57,6 +57,7 @@ const Signup = (props: {setSignup: () => void;}) => {
 
 export const createUser = async (name: string) => {
     const user = firebaseAuth.getAuth().currentUser;
+    const db = fireStore.getFirestore();
     const userDocRef = fireStore.doc(db, "users/" + user?.uid);
     await fireStore.runTransaction(db, async(transaction) => {
         await transaction.set(userDocRef, {

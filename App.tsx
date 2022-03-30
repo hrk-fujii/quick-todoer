@@ -5,8 +5,9 @@ import { extendTheme, NativeBaseProvider, Box } from "native-base";
 import * as expoWebBrowser from 'expo-web-browser';
 import * as firebaseApp from "firebase/app";
 import * as firebaseAuth from "firebase/auth";
-import { firebaseConfig, googleExpoAuthSessionProviderConfig } from './config';
-import GoogleSignin from "./components/authentication/Login";
+import {firebaseConfig} from "./config";
+import Signin from "./components/authentication/Login";
+import Signup from "./components/authentication/Signup";
 import MainContainer from "./components/container/Main";
 
 // Initialize Firebase
@@ -23,6 +24,7 @@ const customTheme = extendTheme({config: customThemeConfig});
 
 function App() {
   const [authorized, setAuthorized] = React.useState<boolean>(false);
+  const [signup, setSignup] = React.useState<boolean>(false);
   
   const auth = firebaseAuth.getAuth();
   firebaseAuth.onAuthStateChanged(auth, (user) => {
@@ -37,7 +39,7 @@ function App() {
     <NativeBaseProvider theme={customTheme}>
       <RecoilRoot>
         <Box flex={1} _dark={{bg: "black"}}>
-          {authorized ? <MainContainer /> : <GoogleSignin />}
+          {authorized ? <MainContainer /> : ( signup ? <Signup setSignup={()=>{setSignup(false)}}/> : <Signin setSignup={()=>{setSignup(true)}}/> )}
         </Box>
       </RecoilRoot>
     </NativeBaseProvider>

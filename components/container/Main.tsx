@@ -1,10 +1,11 @@
 import React from "react";
 import Loading from "./Loading";
-import Signup from "../authentication/Signup";
+import * as Signup from "../authentication/Signup";
 import TodoViewer from "../todoViewer/TodoViewer";
 import TodoEditor from "../todoEditor/TodoEditor";
 import * as types from "../../defines/types"
 import {
+    createUserData,
     modalData_YesNoModalDialog,
     modalShow_TodoEditModal,
     modalData_TodoDetailModal,
@@ -20,6 +21,7 @@ import YesNoModalDialog from "../modal/YesNoModalDialog";
 import TodoEditModal from "../modal/TodoEditModal";
 import TodoDetailModal from "../modal/TodoDetailModal";
 import CheckListModal from "../modal/CheckListModal";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 
 
@@ -27,26 +29,34 @@ const MainContainer = () => {
     const yesNoModalDialogData = useRecoilValue(modalData_YesNoModalDialog);
     const showTodoEditModal = useRecoilValue(modalShow_TodoEditModal);
     const todoDetailModalData = useRecoilValue(modalData_TodoDetailModal);
-    const checkListModalData = useRecoilValue(modalData_CheckListModal)
+    const checkListModalData = useRecoilValue(modalData_CheckListModal);
+    const getCreateUserData = useRecoilValue(createUserData);
     
     const [userData, setUserData] = React.useState<types.user | null>(null);
     const [dbStatus, setDbStatus] = React.useState<string>("loading");
-
+    
+    const db = fireStore.getFirestore();
+    const user = firebaseAuth.getAuth().currentUser;
+    const uid = user?.uid;
+    const userDocRef = fireStore.doc(db, "users/" + uid);
+    
     const getUserData = () => {
         fireStore.getDoc(userDocRef).then((doc) => {
             if (doc.exists()) {
                 setUserData(doc.data());
                 setDbStatus("exists")
             } else {
-                setDbStatus("not exists")
+                setDbStatus("loading");
+                Signup.createUser(getCreateUserData.name).then(() => {
+                    setDbStatus("exists");
+                }, (e) => {
+                    console.log(e);
+                });
             }
+        }, (e) => {
+            console.log(e);
         });
     }
-    
-    const db = fireStore.getFirestore();
-    const user = firebaseAuth.getAuth().currentUser;
-    const uid = user?.uid;
-    const userDocRef = fireStore.doc(db, "users/" + uid);
     
     React.useEffect(() => {
         getUserData();
@@ -54,12 +64,7 @@ const MainContainer = () => {
     
     if (dbStatus === "loading") {
         return (<Loading />);
-    } else if (dbStatus === "not exists") {
-        return <VStack m={5} mt={10}>
-            <Signup email={user?.email} uid={uid} reload={getUserData} />
-        </VStack>;
     }
-    
     let modalIsOpen = false;
     if (yesNoModalDialogData.show || showTodoEditModal || todoDetailModalData.show || checkListModalData.show) {
         modalIsOpen = true;
