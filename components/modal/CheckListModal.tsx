@@ -2,7 +2,7 @@ import React from "react";
 import * as fireStore from "firebase/firestore";
 import * as firebaseAuth from "firebase/auth";
 import {useRecoilState} from "recoil";
-import { Text, Modal, Button, Checkbox, ScrollView } from "native-base";
+import { Box, Text, Modal, Button, Checkbox, ScrollView } from "native-base";
 import {modalData_CheckListModal} from "../../defines/atoms";
 import {checkListItem} from "../../defines/types";
 import { ItemClick } from "native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types";
@@ -38,6 +38,13 @@ const CheckListModal = (props: {id: string; name: string;}) => {
         })
     }
     
+    const addChangedItem = (itemId: string, state: boolean) => {
+        setChanged((val) => {
+            val[itemId] = state;
+            return {...val};
+        });
+    }
+    
     const hChangeCheckList = (docs: fireStore.QuerySnapshot) => {
         if (docs.metadata.hasPendingWrites) {
             return;
@@ -62,15 +69,16 @@ const CheckListModal = (props: {id: string; name: string;}) => {
 
     checkListData.forEach((item) => {
         if (item.data.isChecked) {
-            checkedListProps.push(<Checkbox isDisabled={isLoading} defaultIsChecked key={"check_list_item_" + item.id} accessibilityLabel={item.data.name} onChange={(state) => {setChanged(val => {
-                val[item.id] = state;
-                return {...val};
-            })}}>{item.data.name}</Checkbox>);
+            checkedListProps.push(<Box key={"check_list_item_" + item.id} flexDirection="row" justifyContent="space-between" alignItems="center">
+                <Checkbox isDisabled={isLoading} defaultIsChecked accessibilityLabel={item.data.name} onChange={(state) => {addChangedItem(item.id, state)}}>{item.data.name}</Checkbox>
+                <Button accessibilityLabel={item.data.name + "を削除"}>
+                    削除
+                </Button>
+            </Box>);
         } else {
-            unCheckedListProps.push(<Checkbox isDisabled={isLoading} key={"check_list_item_" + item.id} accessibilityLabel={item.data.name} onChange={(state) => {setChanged(val => {
-                val[item.id] = state;
-                return {...val};
-            })}}>{item.data.name}</Checkbox>);
+            unCheckedListProps.push(<Box key={"check_list_item_" + item.id}>
+                <Checkbox isDisabled={isLoading} accessibilityLabel={item.data.name} onChange={(state) => {addChangedItem(item.id, state)}}>{item.data.name}</Checkbox>
+            </Box>);
         }
     })
 
