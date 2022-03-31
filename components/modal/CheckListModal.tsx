@@ -38,6 +38,15 @@ const CheckListModal = (props: {id: string; name: string;}) => {
         })
     }
     
+    const deleteItem = async (id: string) => {
+        const documentRef = fireStore.doc(db, "users/" + user?.uid + "/tasks/" + modalData.id + "/check_list/" + id);
+        setIsLoading(true);
+        await fireStore.runTransaction(db, async (transaction) => {
+            await transaction.delete(documentRef);
+        });
+        setIsLoading(false);
+    }
+    
     const addChangedItem = (itemId: string, state: boolean) => {
         setChanged((val) => {
             val[itemId] = state;
@@ -71,7 +80,7 @@ const CheckListModal = (props: {id: string; name: string;}) => {
         if (item.data.isChecked) {
             checkedListProps.push(<Box key={"check_list_item_" + item.id} flexDirection="row" justifyContent="space-between" alignItems="center">
                 <Checkbox isDisabled={isLoading} defaultIsChecked accessibilityLabel={item.data.name} onChange={(state) => {addChangedItem(item.id, state)}}>{item.data.name}</Checkbox>
-                <Button accessibilityLabel={item.data.name + "を削除"}>
+                <Button onPress={() => {deleteItem(item.id)}} accessibilityLabel={item.data.name + "を削除"}>
                     削除
                 </Button>
             </Box>);
