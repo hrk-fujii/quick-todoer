@@ -53,7 +53,7 @@ const Todo = (props: {data: task; id: string;}) => {
         buttonEnabled = false;
     }
     
-    return <Box m={2} p={1} _dark={{bg:"rgb(0,0,150)"}} _light={{bg: "rgb(220,220,255)"}}>
+    return <Box m={2} p={1} _dark={{bg:"rgb(0,0,50)"}} _light={{bg: "rgb(230,230,255)"}}>
         <Text　fontSize="lg">{props.data.name}</Text>
         <Text>{props.data.deadlineAt.toLocaleString()} まで</Text>
         <HStack justifyContent="space-between" alignItems="center">

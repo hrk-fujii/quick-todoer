@@ -71,7 +71,7 @@ const MainContainer = () => {
     }
     
     return <VStack mt={10}>
-        <HStack alignItems="center" _dark={{bg: "rgb(255,0,0)"}} _light={{color: "rgb(255,255,255)", bg: "rgb(255,0,0)"}} justifyContent="space-between">
+        <HStack alignItems="center" _dark={{bg: "rgb(0,0,255)"}} _light={{color: "rgb(255,255,255)", bg: "rgb(0,0,255)"}} justifyContent="space-between">
             <Text ml={2} fontSize="xl">Quick Todoer</Text>
             <TodoEditor />
         </HStack>

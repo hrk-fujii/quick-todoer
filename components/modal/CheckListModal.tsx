@@ -78,14 +78,14 @@ const CheckListModal = (props: {id: string; name: string;}) => {
 
     checkListData.forEach((item) => {
         if (item.data.isChecked) {
-            checkedListProps.push(<Box key={"check_list_item_" + item.id} flexDirection="row" justifyContent="space-between" alignItems="center">
+            checkedListProps.push(<Box key={"check_list_item_" + item.id} flexDirection="row" justifyContent="space-between" alignItems="center" my={1}>
                 <Checkbox isDisabled={isLoading} defaultIsChecked accessibilityLabel={item.data.name} onChange={(state) => {addChangedItem(item.id, state)}}>{item.data.name}</Checkbox>
-                <Button onPress={() => {deleteItem(item.id)}} accessibilityLabel={item.data.name + "を削除"}>
+                <Button p={1} px={2} onPress={() => {deleteItem(item.id)}} accessibilityLabel={item.data.name + "を削除"}>
                     削除
                 </Button>
             </Box>);
         } else {
-            unCheckedListProps.push(<Box key={"check_list_item_" + item.id}>
+            unCheckedListProps.push(<Box key={"check_list_item_" + item.id} my={2}>
                 <Checkbox isDisabled={isLoading} accessibilityLabel={item.data.name} onChange={(state) => {addChangedItem(item.id, state)}}>{item.data.name}</Checkbox>
             </Box>);
         }
