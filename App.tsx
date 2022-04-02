@@ -13,19 +13,21 @@ import MainContainer from "./components/container/Main";
 // Initialize Firebase
 firebaseApp.initializeApp(firebaseConfig);
 
-expoWebBrowser.maybeCompleteAuthSession();
-
 
 const customComponentTheme = {
   Button: {
     defaultProps: {
+      borderRadius: "xl",
+      borderWidth: "2",
       _dark: {
         bg: "rgb(0, 0, 200)",
-        color: "rgb(255,255,255)"
+        color: "rgb(255,255,255)",
+        borderColor: "rgb(150,150,255)"
       },
       _light: {
         bg: "rgb(150, 150, 255)",
-        color: "rgb(0,0,0)"
+        color: "rgb(0,0,0)",
+        borderColor: "rgb(0,0,200)"
       }
     }
   }
