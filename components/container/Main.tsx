@@ -12,7 +12,7 @@ import {
     modalData_CheckListModal
 } from "../../defines/atoms";
 import { RecoilBridge, useRecoilValue } from "recoil";
-import { Box, HStack, VStack, Text} from "native-base";
+import { Button, Box, HStack, VStack, Text} from "native-base";
 import * as firebaseAuth from "firebase/auth";
 import * as fireStore from "firebase/firestore";
 import { setDoc } from "firebase/firestore";
@@ -62,6 +62,10 @@ const MainContainer = () => {
         getUserData();
     }, []);
     
+    const hLogout = async() => {
+        await firebaseAuth.signOut(firebaseAuth.getAuth());
+    }
+    
     if (dbStatus === "loading") {
         return (<Loading />);
     }
@@ -73,6 +77,9 @@ const MainContainer = () => {
     return <VStack mt={10}>
         <HStack alignItems="center" _dark={{bg: "rgb(0,0,255)"}} _light={{color: "rgb(255,255,255)", bg: "rgb(0,0,255)"}} justifyContent="space-between">
             <Text ml={2} fontSize="xl">Quick Todoer</Text>
+            <Button onPress={() => {hLogout()}}>
+                ログアウト
+            </Button>
             <TodoEditor />
         </HStack>
         <TodoViewer />
