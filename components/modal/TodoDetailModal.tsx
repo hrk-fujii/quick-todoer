@@ -2,12 +2,13 @@ import React from "react";
 import * as firebaseAuth from "firebase/auth";
 import * as fireStore from "firebase/firestore";
 import {Modal, Text, Button} from "native-base";
-import {useRecoilState} from "recoil";
-import {modalData_YesNoModalDialog, modalData_TodoDetailModal} from "../../defines/atoms";
+import {useSetRecoilState, useRecoilState} from "recoil";
+import {modalData_NoticeModalDialog, modalData_YesNoModalDialog, modalData_TodoDetailModal} from "../../defines/atoms";
 
 const TodoDetailModal = () => {
     const [data, setData] = useRecoilState(modalData_TodoDetailModal);
     const [yesNoDialogData, setYesNoDialogData] = useRecoilState(modalData_YesNoModalDialog);
+    const setNoticeDialogData = useSetRecoilState(modalData_NoticeModalDialog);
     
     const user = firebaseAuth.getAuth().currentUser;
     const db = fireStore.getFirestore();
@@ -22,7 +23,11 @@ const TodoDetailModal = () => {
             onSelectYes: async () => {
                 setYesNoDialogData({...yesNoDialogData, processing: true});
                 const docRef = fireStore.doc(db, "users/" + user?.uid + "/tasks/" + data.id);
-                await fireStore.deleteDoc(docRef);
+                try {
+                    await fireStore.deleteDoc(docRef);
+                } catch (error) {
+                    setNoticeDialogData({show: true, message: "削除に失敗しました。時間をおいて、再度試してみたください。"})
+                }
                 setYesNoDialogData({...yesNoDialogData, show: false, processing: false});
             },
             onSelectNo: () => {

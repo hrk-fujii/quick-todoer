@@ -6,6 +6,7 @@ import TodoEditor from "../todoEditor/TodoEditor";
 import * as types from "../../defines/types"
 import {
     createUserData,
+    modalData_NoticeModalDialog,
     modalData_YesNoModalDialog,
     modalShow_TodoEditModal,
     modalData_TodoDetailModal,
@@ -17,6 +18,7 @@ import * as firebaseAuth from "firebase/auth";
 import * as fireStore from "firebase/firestore";
 import { setDoc } from "firebase/firestore";
 
+import NoticeModalDialog from "../modal/NoticeDialog";
 import YesNoModalDialog from "../modal/YesNoModalDialog";
 import TodoEditModal from "../modal/TodoEditModal";
 import TodoDetailModal from "../modal/TodoDetailModal";
@@ -26,6 +28,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 
 
 const MainContainer = () => {
+    const noticeModalDialogData = useRecoilValue(modalData_NoticeModalDialog);
     const yesNoModalDialogData = useRecoilValue(modalData_YesNoModalDialog);
     const showTodoEditModal = useRecoilValue(modalShow_TodoEditModal);
     const todoDetailModalData = useRecoilValue(modalData_TodoDetailModal);
@@ -70,7 +73,7 @@ const MainContainer = () => {
         return (<Loading />);
     }
     let modalIsOpen = false;
-    if (yesNoModalDialogData.show || showTodoEditModal || todoDetailModalData.show || checkListModalData.show) {
+    if (noticeModalDialogData.show || yesNoModalDialogData.show || showTodoEditModal || todoDetailModalData.show || checkListModalData.show) {
         modalIsOpen = true;
     }
     
@@ -85,6 +88,7 @@ const MainContainer = () => {
         <TodoViewer />
         <Box overflow="hidden" accessibilityElementsHidden={!modalIsOpen} accessibilityViewIsModal={modalIsOpen}>
             <Text height="1px"> </Text>
+            <NoticeModalDialog />
             <YesNoModalDialog />
             <TodoEditModal />
             <TodoDetailModal />

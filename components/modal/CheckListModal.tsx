@@ -1,12 +1,11 @@
 import React from "react";
 import * as fireStore from "firebase/firestore";
 import * as firebaseAuth from "firebase/auth";
-import {useRecoilState} from "recoil";
+import {useSetRecoilState, useRecoilState} from "recoil";
 import { Box, Text, Modal, Button, Checkbox, ScrollView } from "native-base";
-import {modalData_CheckListModal} from "../../defines/atoms";
+import {modalData_NoticeModalDialog, modalData_CheckListModal} from "../../defines/atoms";
 import {checkListItem} from "../../defines/types";
 import { ItemClick } from "native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types";
-import { onAuthStateChanged } from "firebase/auth";
 
 const CheckListModal = (props: {id: string; name: string;}) => {
     const db = fireStore.getFirestore();
@@ -16,6 +15,7 @@ const CheckListModal = (props: {id: string; name: string;}) => {
     const [checkListData , setCheckListData] = React.useState<{id: string; data: checkListItem;}[]>([]);
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [modalData, setModalData] = useRecoilState(modalData_CheckListModal);
+    const setNoticeDialogData = useSetRecoilState(modalData_NoticeModalDialog);
     
     React.useEffect(() => {
         let taskId = "_";
@@ -30,20 +30,28 @@ const CheckListModal = (props: {id: string; name: string;}) => {
 
     const hNewItem = () => {
         const checkListCollectionRef = fireStore.collection(db, "users/" + user?.uid + "/tasks/" + modalData.id + "/check_list");
-        fireStore.addDoc(checkListCollectionRef, {
-            name: "test item",
-            isChecked: false,
-            updatedAt: fireStore.serverTimestamp(),
-            createdAt: fireStore.serverTimestamp()
-        })
+        try {
+            fireStore.addDoc(checkListCollectionRef, {
+                name: "test item",
+                isChecked: false,
+                updatedAt: fireStore.serverTimestamp(),
+                createdAt: fireStore.serverTimestamp()
+            });
+        } catch (error) {
+            setNoticeDialogData({show: true, message: "チェックリストの更新に失敗しました。時間をおいて、再度試してみてください。"});
+        }
     }
     
     const deleteItem = async (id: string) => {
         const documentRef = fireStore.doc(db, "users/" + user?.uid + "/tasks/" + modalData.id + "/check_list/" + id);
         setIsLoading(true);
-        await fireStore.runTransaction(db, async (transaction) => {
-            await transaction.delete(documentRef);
-        });
+        try {
+            await fireStore.runTransaction(db, async (transaction) => {
+                await transaction.delete(documentRef);
+            });
+        } catch (error) {
+            setNoticeDialogData({show: true, message: "チェックリストの更新に失敗しました。時間をおいて、再度試してみてください。"});
+        }
         setIsLoading(false);
     }
     
@@ -108,15 +116,19 @@ const CheckListModal = (props: {id: string; name: string;}) => {
     const hApplyChange = async () => {
         setIsLoading(true);
         const checkListPath = "users/" + user?.uid + "/tasks/" + modalData.id + "/check_list/";
-        await fireStore.runTransaction(db, async (transaction) => {
-            await Object.entries(changed).forEach(async ([key, state]) => {
-                const itemRef = fireStore.doc(db, checkListPath + key);
-                await transaction.update(itemRef, {
-                    isChecked: state,
-                    updatedAt: fireStore.serverTimestamp()
+        try {
+            await fireStore.runTransaction(db, async (transaction) => {
+                await Object.entries(changed).forEach(async ([key, state]) => {
+                    const itemRef = fireStore.doc(db, checkListPath + key);
+                    await transaction.update(itemRef, {
+                        isChecked: state,
+                        updatedAt: fireStore.serverTimestamp()
+                    });
                 });
             });
-        });
+        } catch (error) {
+            setNoticeDialogData({show: true, message: "チェック状態を保存できませんでした。時間をおいて、再度試してみてください。"});
+        }
         setChanged({});
         setIsLoading(false);
     }

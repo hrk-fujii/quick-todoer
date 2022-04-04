@@ -2,12 +2,13 @@ import React from "react";
 import { Box, Button, FormControl, Input, TextArea, Modal, Text } from "native-base";
 import * as fireStore from "firebase/firestore";
 import * as firebaseAuth from "firebase/auth";
-import {useRecoilState} from "recoil";
-import {modalShow_TodoEditModal} from "../../defines/atoms";
+import {useSetRecoilState, useRecoilState} from "recoil";
+import {modalData_NoticeModalDialog, modalShow_TodoEditModal} from "../../defines/atoms";
 
 
 const EditModal = () => {
     const [modalShow, setModalShow] = useRecoilState(modalShow_TodoEditModal);
+    const setNoticeDialog = useSetRecoilState(modalData_NoticeModalDialog);
     const [name, setName] = React.useState<string>("");
     const [description, setDescription] = React.useState<string>("");
     const [deadlineString, setDeadlineString] = React.useState<string>("");
@@ -33,7 +34,11 @@ const EditModal = () => {
         };
 
         const userRef = fireStore.collection(db, "users/" + user.uid + "/tasks");
-        await fireStore.addDoc(userRef, data);
+        try {
+            await fireStore.addDoc(userRef, data);
+        } catch (error) {
+            setNoticeDialog({show: true, message: "やることの作成に失敗しました。インターネット接続をご確認のうえ、時間をおいて、再度試してみてください。"})
+        }
         hClose();
     }
 

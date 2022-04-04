@@ -4,21 +4,28 @@ import * as fireStore from "firebase/firestore";
 import { Box, HStack, Text, Button } from "native-base";
 import { task } from "../../defines/types";
 import {useSetRecoilState} from "recoil";
-import {modalData_TodoDetailModal, modalData_CheckListModal} from "../../defines/atoms";
+import {modalData_TodoDetailModal, modalData_CheckListModal, modalData_NoticeModalDialog} from "../../defines/atoms";
 
 const Todo = (props: {data: task; id: string;}) => {
     const setDetailModal = useSetRecoilState(modalData_TodoDetailModal);
     const setCheckListModal = useSetRecoilState(modalData_CheckListModal);
+    const setNoticeDialog = useSetRecoilState(modalData_NoticeModalDialog);
     
     const user = firebaseAuth.getAuth().currentUser;
     const db = fireStore.getFirestore();
     const taskDocRef = fireStore.doc(db, "users/" + user?.uid + "/tasks/" + props.id);
     
     const hStatusChange = async () => {
-        if (props.data.status === "yet") {
-            await fireStore.updateDoc(taskDocRef, {status: "doing"});
-        } else if (props.data.status === "doing") {
-            await fireStore.updateDoc(taskDocRef, {status: "done"});
+        try {
+            await fireStore.runTransaction(db, async (transaction) => {
+                if (props.data.status === "yet") {
+                    await transaction.update(taskDocRef, {status: "doing"});
+                } else if (props.data.status === "doing") {
+                    await transaction.update(taskDocRef, {status: "done"});
+                }
+            });
+        } catch (error) {
+            setNoticeDialog({show: true, message: "処理に失敗しました。時間をおいて、再度試してみてください。"});
         }
     }
 
@@ -27,7 +34,7 @@ const Todo = (props: {data: task; id: string;}) => {
             show: true,
             id: props.id,
             name: props.data.name
-        })
+        });
     }
     
     const hOpenDetail = () => {
