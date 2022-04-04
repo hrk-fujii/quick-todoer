@@ -24,6 +24,17 @@ export const modalData_YesNoModalDialog = atom<{
     }
 });
 
+export const modalData_NoticeModalDialog = atom<{
+    show: boolean;
+    message: string;
+}>({
+    key: "modalData_NoticeModalDialog",
+    default: {
+        show: false,
+        message: ""
+    }
+});
+
 export const modalShow_TodoEditModal = atom<boolean>({
     key: "modalShow_TodoEditModal",
     default: false
