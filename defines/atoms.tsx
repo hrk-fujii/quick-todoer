@@ -7,6 +7,22 @@ export const createUserData = atom<{name: string;}>({
     }
 });
 
+export const modalData_TodoReEditModal = atom<{
+    show: boolean;
+    id: string;
+    name: string;
+    description: string;
+    deadlineAt: Date;
+}>({
+    key: "modalData_TodoReEditModal",
+    default: {
+        show: false,
+        name: "",
+        description: "",
+        deadlineAt: new Date()
+    }
+});
+
 export const modalData_YesNoModalDialog = atom<{
     show: boolean;
     processing: boolean,
@@ -27,11 +43,13 @@ export const modalData_YesNoModalDialog = atom<{
 export const modalData_NoticeModalDialog = atom<{
     show: boolean;
     message: string;
+    onClose: () => void;
 }>({
     key: "modalData_NoticeModalDialog",
     default: {
         show: false,
-        message: ""
+        message: "",
+        onClose: () => {}
     }
 });
 

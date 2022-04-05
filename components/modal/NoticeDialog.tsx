@@ -6,13 +6,22 @@ import {useRecoilState} from "recoil";
 const NoticeModalDialog = () => {
     const [data, setData] = useRecoilState(modalData_NoticeModalDialog);
 
+    const hClose = () => {
+        data.onClose();
+        setData({
+            show: false,
+            message: "",
+            onClose: () => {}
+        });
+    }
+    
     return <Modal isOpen={data.show}>
         <Modal.Content>
             <Modal.Body>
                 {data.message}
             </Modal.Body>
             <Modal.Footer justifyContent="flex-end">
-                <Button m={2} onPress={() => {setData({show: false, message: ""})}}>
+                <Button m={2} onPress={hClose}>
                     OK
                 </Button>
             </Modal.Footer>
