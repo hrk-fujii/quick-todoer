@@ -34,7 +34,7 @@ const TodoDetailModal = () => {
                     const recursiveDeleteFunction = firebaseFunctions.httpsCallable(functions, "fireStoreFunctions-recursiveDelete");
                     await recursiveDeleteFunction({path: docPath});
                 } catch (error) {
-                    setNoticeDialogData({show: true, message: "削除に失敗しました。時間をおいて、再度試してみたください。"})
+                    setNoticeDialogData({show: true, message: "削除に失敗しました。時間をおいて、再度試してみたください。", onClose:()=>{}})
                 }
                 setYesNoDialogData({...yesNoDialogData, show: false, processing: false});
             },

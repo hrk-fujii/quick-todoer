@@ -33,11 +33,17 @@ const EditModal = () => {
             updatedAt: fireStore.serverTimestamp()
         };
 
+        setModalShow(false);
         const userRef = fireStore.collection(db, "users/" + user.uid + "/tasks");
         try {
             await fireStore.addDoc(userRef, data);
+            setModalShow(true);
         } catch (error) {
-            setNoticeDialog({show: true, message: "やることの作成に失敗しました。インターネット接続をご確認のうえ、時間をおいて、再度試してみてください。"})
+            setNoticeDialog({
+                show: true,
+                message: "やることの作成に失敗しました。インターネット接続をご確認のうえ、時間をおいて、再度試してみてください。",
+                onClose: () => {setModalShow(true)}
+            });
         }
         hClose();
     }

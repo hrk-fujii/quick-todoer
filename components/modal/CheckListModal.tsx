@@ -50,7 +50,7 @@ const CheckListModal = (props: {id: string; name: string;}) => {
                 await transaction.delete(documentRef);
             });
         } catch (error) {
-            setNoticeDialogData({show: true, message: "チェックリストの更新に失敗しました。時間をおいて、再度試してみてください。"});
+            setNoticeDialogData({show: true, message: "チェックリストの更新に失敗しました。時間をおいて、再度試してみてください。", onClose=()=>{}});
         }
         setIsLoading(false);
     }
@@ -127,7 +127,7 @@ const CheckListModal = (props: {id: string; name: string;}) => {
                 });
             });
         } catch (error) {
-            setNoticeDialogData({show: true, message: "チェック状態を保存できませんでした。時間をおいて、再度試してみてください。"});
+            setNoticeDialogData({show: true, message: "チェック状態を保存できませんでした。時間をおいて、再度試してみてください。", onClose: ()=>{}});
         }
         setChanged({});
         setIsLoading(false);
