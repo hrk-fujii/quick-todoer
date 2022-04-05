@@ -1,30 +1,38 @@
 import React from "react";
+import * as firebaseFunctions from "firebase/functions";
 import * as firebaseAuth from "firebase/auth";
 import * as fireStore from "firebase/firestore";
 import {Modal, Text, Button} from "native-base";
 import {useSetRecoilState, useRecoilState} from "recoil";
-import {modalData_NoticeModalDialog, modalData_YesNoModalDialog, modalData_TodoDetailModal} from "../../defines/atoms";
+import {modalData_TodoReEditModal, modalData_NoticeModalDialog, modalData_YesNoModalDialog, modalData_TodoDetailModal} from "../../defines/atoms";
 
 const TodoDetailModal = () => {
     const [data, setData] = useRecoilState(modalData_TodoDetailModal);
     const [yesNoDialogData, setYesNoDialogData] = useRecoilState(modalData_YesNoModalDialog);
     const setNoticeDialogData = useSetRecoilState(modalData_NoticeModalDialog);
+    const setTodoReEditModal = useSetRecoilState(modalData_TodoReEditModal);
     
     const user = firebaseAuth.getAuth().currentUser;
     const db = fireStore.getFirestore();
+    const functions = firebaseFunctions.getFunctions();
     
     
     const hDelete = () => {
         setData({...data, show: false});
+        
         setYesNoDialogData({
             show: true,
             processing: false,
             message: "「" + data.name + "」を消去しますか。",
             onSelectYes: async () => {
                 setYesNoDialogData({...yesNoDialogData, processing: true});
-                const docRef = fireStore.doc(db, "users/" + user?.uid + "/tasks/" + data.id);
+                const docPath = "users/" + user?.uid + "/tasks/" + data.id;
+                if (!(data.id)) {
+                    return;
+                }
                 try {
-                    await fireStore.deleteDoc(docRef);
+                    const recursiveDeleteFunction = firebaseFunctions.httpsCallable(functions, "fireStoreFunctions-recursiveDelete");
+                    await recursiveDeleteFunction({path: docPath});
                 } catch (error) {
                     setNoticeDialogData({show: true, message: "削除に失敗しました。時間をおいて、再度試してみたください。"})
                 }
@@ -35,6 +43,17 @@ const TodoDetailModal = () => {
                 setData({...data, show: true});
             }
         })
+    }
+
+    const hEdit = () => {
+        setData({...data, show: false});
+        setTodoReEditModal({
+            show: true,
+            id: data.id,
+            name: data.name,
+            description: data.description,
+            deadlineAt: data.deadlineAt
+        });
     }
     
     return <Modal isOpen={data.show} size="full">
@@ -57,7 +76,7 @@ const TodoDetailModal = () => {
                 <Button accessibilityState={{disabled: (data.status === "yet")}} disabled={data.status === "yet"} m={2}>
                     未着手
                 </Button>
-                <Button m={2}>
+                <Button onPress={hEdit} m={2}>
                     編集
                 </Button>
                 <Button onPress={() => {setData({...data, show: false})}} m={2}>
