@@ -25,7 +25,7 @@ const CheckListModal = (props: {id: string; name: string;}) => {
         const checkListRef = fireStore.collection(db, "users/" + user.uid + "/tasks/" + taskId + "/check_list");
         const unSubscribe = fireStore.onSnapshot(checkListRef, {
             includeMetadataChanges: true
-        }, hChangeCheckList);
+        }, hChangeCheckList, (error) => {console.log(error)});
     }, [modalData]);
 
     const hNewItem = () => {
@@ -50,7 +50,7 @@ const CheckListModal = (props: {id: string; name: string;}) => {
                 await transaction.delete(documentRef);
             });
         } catch (error) {
-            setNoticeDialogData({show: true, message: "チェックリストの更新に失敗しました。時間をおいて、再度試してみてください。", onClose=()=>{}});
+            setNoticeDialogData({show: true, message: "チェックリストの更新に失敗しました。時間をおいて、再度試してみてください。", onClose: ()=>{}});
         }
         setIsLoading(false);
     }

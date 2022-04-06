@@ -3,6 +3,7 @@ import Loading from "./Loading";
 import * as Signup from "../authentication/Signup";
 import TodoViewer from "../todoViewer/TodoViewer";
 import TodoEditor from "../todoEditor/TodoEditor";
+import InformationBar from "../informationBar/InformationBar";
 import * as types from "../../defines/types"
 import {
     createUserData,
@@ -11,9 +12,11 @@ import {
     modalData_YesNoModalDialog,
     modalShow_TodoEditModal,
     modalData_TodoDetailModal,
-    modalData_CheckListModal
+    modalData_CheckListModal,
+    modalShow_UserSettingsModal,
+    userInfo
 } from "../../defines/atoms";
-import { RecoilBridge, useRecoilValue } from "recoil";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import { Button, Box, HStack, VStack, Text} from "native-base";
 import * as firebaseAuth from "firebase/auth";
 import * as fireStore from "firebase/firestore";
@@ -26,6 +29,7 @@ import TodoEditModal from "../modal/TodoEditModal";
 import TodoDetailModal from "../modal/TodoDetailModal";
 import CheckListModal from "../modal/CheckListModal";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import UserSettingsModal from "../modal/UserSettingsModal";
 
 
 
@@ -37,8 +41,9 @@ const MainContainer = () => {
     const todoDetailModalData = useRecoilValue(modalData_TodoDetailModal);
     const checkListModalData = useRecoilValue(modalData_CheckListModal);
     const getCreateUserData = useRecoilValue(createUserData);
+    const showUserSettingsModal = useRecoilValue(modalShow_UserSettingsModal);
+    const setUserInfo = useSetRecoilState(userInfo);
     
-    const [userData, setUserData] = React.useState<types.user | null>(null);
     const [dbStatus, setDbStatus] = React.useState<string>("loading");
     
     const db = fireStore.getFirestore();
@@ -46,10 +51,16 @@ const MainContainer = () => {
     const uid = user?.uid;
     const userDocRef = fireStore.doc(db, "users/" + uid);
     
+    firebaseAuth.onAuthStateChanged(firebaseAuth.getAuth(), (user) => {
+        if (!(user)) {
+            setUserInfo({name: ""});
+        }
+    });
+    
     const getUserData = () => {
         fireStore.getDoc(userDocRef).then((doc) => {
             if (doc.exists()) {
-                setUserData(doc.data());
+                setUserInfo({name: doc.data().name});
                 setDbStatus("exists")
             } else {
                 setDbStatus("loading");
@@ -67,25 +78,19 @@ const MainContainer = () => {
     React.useEffect(() => {
         getUserData();
     }, []);
-    
-    const hLogout = async() => {
-        await firebaseAuth.signOut(firebaseAuth.getAuth());
-    }
-    
+
+
     if (dbStatus === "loading") {
         return (<Loading />);
     }
     let modalIsOpen = false;
-    if (noticeModalDialogData.show || todoReEditModalData.show || yesNoModalDialogData.show || showTodoEditModal || todoDetailModalData.show || checkListModalData.show) {
+    if (noticeModalDialogData.show || todoReEditModalData.show || yesNoModalDialogData.show || showTodoEditModal || todoDetailModalData.show || checkListModalData.show || showUserSettingsModal) {
         modalIsOpen = true;
     }
     
     return <VStack mt={10}>
         <HStack alignItems="center" _dark={{bg: "rgb(0,0,255)"}} _light={{color: "rgb(255,255,255)", bg: "rgb(0,0,255)"}} justifyContent="space-between">
             <Text ml={2} fontSize="xl">Quick Todoer</Text>
-            <Button onPress={() => {hLogout()}}>
-                ログアウト
-            </Button>
             <TodoEditor />
         </HStack>
         <TodoViewer />
@@ -97,7 +102,9 @@ const MainContainer = () => {
             <TodoEditModal />
             <TodoDetailModal />
             <CheckListModal />
+            <UserSettingsModal />
         </Box>
+        <InformationBar />
     </VStack>;
 }
 

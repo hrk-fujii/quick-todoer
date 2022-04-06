@@ -31,9 +31,7 @@ const TodoViewer = () => {
         const tasksRef = fireStore.collection(db, "users/" + user?.uid + "/tasks");
         const unSubscribe = fireStore.onSnapshot(tasksRef, {
             includeMetadataChanges: true
-        }, hChangeTasks);
-
-        return unSubscribe;
+        }, hChangeTasks, (error) => {console.log(error)});
     }, []);
     
     let todoList: React.FC[] = [];
