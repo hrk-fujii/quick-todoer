@@ -53,6 +53,11 @@ export const modalData_NoticeModalDialog = atom<{
     }
 });
 
+export const modalShow_UserSettingsModal = atom<boolean>({
+    key: "modalShow_UserSettingsModal",
+    default: false
+});
+
 export const modalShow_TodoEditModal = atom<boolean>({
     key: "modalShow_TodoEditModal",
     default: false
@@ -92,6 +97,15 @@ export const modalData_CheckListModal = atom<{
     default: {
         show: false,
         id: "",
+        name: ""
+    }
+});
+
+export const userInfo = atom<{
+    name: string;
+}>({
+    key: "userInfo",
+    default: {
         name: ""
     }
 });
