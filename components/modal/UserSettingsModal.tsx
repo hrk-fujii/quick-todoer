@@ -1,10 +1,18 @@
 import React from "react";
 import {Modal, Box, Input, Button, Text} from "native-base";
+import {useRecoilState} from "recoil";
+import {modalShow_UserSettingsModal} from "../../defines/atoms";
 import * as firebaseAuth from "firebase/auth";
 import * as fireStore from "firebase/firestore";
 
 const UserSettingsModal = () => {
-    return <Modal>
+    const [modalShow, setModalShow] = useRecoilState(modalShow_UserSettingsModal);
+    
+    const hClose = () => {
+        setModalShow(false);
+    }
+    
+    return <Modal isOpen={modalShow} size="full">
         <Modal.Content>
             <Modal.Body>
                 <Box>
@@ -33,7 +41,7 @@ const UserSettingsModal = () => {
                 </Box>
             </Modal.Body>
             <Modal.Footer>
-                <Button m={1}>
+                <Button onPress={hClose} m={1}>
                     閉じる
                 </Button>
             </Modal.Footer>
