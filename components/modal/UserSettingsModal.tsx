@@ -4,6 +4,7 @@ import {useRecoilState} from "recoil";
 import {userInfo, modalShow_UserSettingsModal} from "../../defines/atoms";
 import * as firebaseAuth from "firebase/auth";
 import * as fireStore from "firebase/firestore";
+import * as firebaseFunctions from "firebase/functions";
 
 const UserSettingsModal = () => {
     const [password, setPassword] = React.useState<string>("");
@@ -16,9 +17,37 @@ const UserSettingsModal = () => {
     const [getUserInfo, setUserInfo] = useRecoilState(userInfo);
 
     const auth = firebaseAuth.getAuth();
+    const db = fireStore.getFirestore();
+    const functions = firebaseFunctions.getFunctions();
+    const userDoc = fireStore.doc(db, "users/" + auth.currentUser?.uid);
     
     const hClose = () => {
         setModalShow(false);
+    }
+    
+    const hChange = async () => {
+        try {
+            if (name) {
+                await fireStore.runTransaction(db, async (transaction) => {
+                    await transaction.update(userDoc, {name: name});
+                });
+                setUserInfo({...getUserInfo, name: name});
+            }
+            if (email || newPassword) {
+                // const credential = firebaseAuth.EmailAuthProvider.credential(auth.currentUser?.email, password);
+                // const userCredential = await firebaseAuth.reauthenticateWithCredential(user, credential);
+                if (email) {
+                    await firebaseAuth.updateEmail(auth.currentUser, email);
+                }
+                if (newPassword) {
+                    const updatePasswordFunction = firebaseFunctions.httpsCallable(functions, "authFunctions-updatePassword");
+                    await updatePasswordFunction({password: password, newPassword: newPassword});
+                }
+                auth.signOut();
+            }
+        } catch (error) {
+            console.log(error.toString());
+        }
     }
     
     return <Modal isOpen={modalShow} size="full">
@@ -26,7 +55,7 @@ const UserSettingsModal = () => {
             <Modal.Body>
                 <Box>
                     <Text>1. 以下の2または3の操作をするには、現在のパスワードを入力してください。</Text>
-                    <Input type="password" />
+                    <Input type="password" placeholder="現在のパスワード" onChangeText={(text) => {setPassword(text)}} />
                 </Box>
                 <Box mt={3}>
                     <Text>2. アカウント情報を変更するには、変更したい項目を入力し「変更を適用」をタップしてください。</Text>
@@ -39,7 +68,7 @@ const UserSettingsModal = () => {
                     <Input placeholder="パスワードの確認" type="password" onChangeText={(text) => {setConfirmNewPassword(text)}} />
                 </Box>
                 <Box alignItems="flex-end" mt={2}>
-                    <Button width="100px">
+                    <Button onPress={() => {hChange()}} width="100px">
                         変更を適用
                     </Button>
                 </Box>
