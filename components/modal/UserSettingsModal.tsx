@@ -37,7 +37,8 @@ const UserSettingsModal = () => {
                 // const credential = firebaseAuth.EmailAuthProvider.credential(auth.currentUser?.email, password);
                 // const userCredential = await firebaseAuth.reauthenticateWithCredential(user, credential);
                 if (email) {
-                    await firebaseAuth.updateEmail(auth.currentUser, email);
+                    const updateEmailFunction = firebaseFunctions.httpsCallable(functions, "authFunctions-updateEmail");
+                    await updateEmailFunction({password: password, newEmail: email});
                 }
                 if (newPassword) {
                     const updatePasswordFunction = firebaseFunctions.httpsCallable(functions, "authFunctions-updatePassword");
@@ -54,7 +55,7 @@ const UserSettingsModal = () => {
         <Modal.Content>
             <Modal.Body>
                 <Box>
-                    <Text>1. 以下の2または3の操作をするには、現在のパスワードを入力してください。</Text>
+                    <Text>1. メールアドレス、パスワードの変更、および退会するには、現在のパスワードを入力してください。</Text>
                     <Input type="password" placeholder="現在のパスワード" onChangeText={(text) => {setPassword(text)}} />
                 </Box>
                 <Box mt={3}>
