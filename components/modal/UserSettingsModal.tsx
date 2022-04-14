@@ -21,6 +21,13 @@ const UserSettingsModal = () => {
     const functions = firebaseFunctions.getFunctions();
     const userDoc = fireStore.doc(db, "users/" + auth.currentUser?.uid);
     
+    React.useEffect(() => {
+        setEmail("");
+        setPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+    }, [modalShow])
+    
     const hClose = () => {
         setModalShow(false);
     }
