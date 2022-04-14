@@ -1,7 +1,8 @@
 import React from 'react';
 import * as firebaseAuth from 'firebase/auth';
-import { Row, Center, Text, Link, Input, Button } from "native-base";
+import { Box, Center, Text, Link, Input, Button } from "native-base";
 import { googleExpoAuthSessionProviderConfig } from '../.././config';
+import {getErrorMessage} from "../../utils/errorMessage";
 
 
 const Login = (props: {setSignup: ()=>void;}) => {
@@ -15,38 +16,36 @@ const Login = (props: {setSignup: ()=>void;}) => {
     try {
       await firebaseAuth.signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      const messageMatch = error.toString().match(/\(auth\/(.*)\)/);
-      let message = "";
-      if (message !== null) {
-        message = messageMatch[1];
-      }
+      const message = getErrorMessage(error.toString());
       setErrorMessage(message);
     }
   }
 
-  return <Center flex={1}>
-    <Row>
-      <Text>ログイン</Text>
-    </Row>
-    <Row>
-      <Text>メールアドレス</Text>
+  return <Center flex={1} alignItems="stretch">
+    <Box alignItems="center">
+      <Text fontSize="lg">ログイン</Text>
+    </Box>
+    <Box mt={2}>
+      <Text m={1}>メールアドレス</Text>
       <Input type='email' keyboardType='email-address' onChangeText={(t) => {setEmail(t)}} />
-    </Row>
-    <Row>
-      <Text>パスワード</Text>
+    </Box>
+    <Box mt={1}>
+      <Text m={1}>パスワード</Text>
       <Input type="password" onChangeText={(t) => {setPassword(t)}} />
-    </Row>
-    <Row>
-      <Text>{errorMessage}</Text>
-      <Button onPress={hSubmit}>
+    </Box>
+    <Box justifyContent="center" m={2}>
+      <Text m={1}>{errorMessage}</Text>
+    </Box>
+    <Box alignItems="flex-end">
+      <Button onPress={hSubmit} width="100px" mx={3}>
         ログイン
       </Button>
-    </Row>
-    <Row>
-      <Link onPress={props.setSignup}>
+    </Box>
+    <Box alignItems="center" mt={4}>
+      <Link m={2} onPress={props.setSignup}>
         ユーザー登録してはじめる
       </Link>
-    </Row>
+    </Box>
   </Center>
 }
 
