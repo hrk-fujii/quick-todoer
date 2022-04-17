@@ -17,6 +17,11 @@ const UserSettingsModal = () => {
     const [modalShow, setModalShow] = useRecoilState(modalShow_UserSettingsModal);
     const [getUserInfo, setUserInfo] = useRecoilState(userInfo);
     const setNoticeModalData = useSetRecoilState(modalData_NoticeModalDialog);
+    const passwordRef = React.useRef<HTMLInputElement>(null);
+    const nameRef = React.useRef<HTMLInputElement>(null);
+    const emailRef = React.useRef<HTMLInputElement>(null);
+    const newPasswordRef = React.useRef<HTMLInputElement>(null);
+    const confirmNewPasswordRef = React.useRef<HTMLInputElement>(null);
 
     const auth = firebaseAuth.getAuth();
     const db = fireStore.getFirestore();
@@ -28,7 +33,12 @@ const UserSettingsModal = () => {
         setPassword("");
         setNewPassword("");
         setConfirmNewPassword("");
-        // setModalShow(false);
+        passwordRef.current?.clear();
+        nameRef.current?.clear();
+        emailRef.current?.clear();
+        newPasswordRef.current?.clear();
+        confirmNewPasswordRef.current?.clear();
+        setModalShow(false);
     }
     
     const hChange = async () => {
@@ -67,17 +77,17 @@ const UserSettingsModal = () => {
             <Modal.Body>
                 <Box>
                     <Text>1. メールアドレス、パスワードの変更、および退会するには、現在のパスワードを入力してください。</Text>
-                    <Input type="password" placeholder="現在のパスワード" onChangeText={(text) => {setPassword(text)}} />
+                    <Input ref={passwordRef} type="password" placeholder="現在のパスワード" onChangeText={(text) => {setPassword(text)}} />
                 </Box>
                 <Box mt={3}>
                     <Text>2. アカウント情報を変更するには、変更したい項目を入力し「変更を適用」をタップしてください。</Text>
                     <Text numberOfLines={1} ellipsizeMode="tail" mt={2}>ニックネーム: {getUserInfo.name}</Text>
-                    <Input placeholder="新しいニックネーム" onChangeText={(text) => {setName(text)}} />
+                    <Input ref={nameRef} placeholder="新しいニックネーム" onChangeText={(text) => {setName(text)}} />
                     <Text numberOfLines={1} ellipsizeMode="tail" mt={2}>メールアドレス: {auth.currentUser?.email}</Text>
-                    <Input placeholder="新しいメールアドレス" type="email" keyboardType="email-address" onChangeText={(text) => {setEmail(text)}} />
+                    <Input ref={emailRef} placeholder="新しいメールアドレス" type="email" keyboardType="email-address" onChangeText={(text) => {setEmail(text)}} />
                     <Text mt={2}>パスワード</Text>
-                    <Input placeholder="パスワード" type="password" onChangeText={(text) => {setNewPassword(text)}} />
-                    <Input placeholder="パスワードの確認" type="password" onChangeText={(text) => {setConfirmNewPassword(text)}} />
+                    <Input ref={newPasswordRef} placeholder="パスワード" type="password" onChangeText={(text) => {setNewPassword(text)}} />
+                    <Input ref={confirmNewPasswordRef} placeholder="パスワードの確認" type="password" onChangeText={(text) => {setConfirmNewPassword(text)}} />
                 </Box>
                 <Box alignItems="flex-end" mt={2}>
                     <Button onPress={() => {hChange()}} width="100px">
