@@ -88,12 +88,14 @@ const MainContainer = () => {
         modalIsOpen = true;
     }
     
-    return <VStack mt={10}>
-        <HStack alignItems="center" _dark={{bg: "rgb(0,0,255)"}} _light={{color: "rgb(255,255,255)", bg: "rgb(0,0,255)"}} justifyContent="space-between">
+    return <VStack justifyContent="space-between" flex={1} safeArea>
+        <HStack alignItems="center" _dark={{bg: "rgb(0,0,255)"}} _light={{color: "rgb(255,255,255)", bg: "rgb(0,0,255)"}} justifyContent="space-between" mb={2}>
             <Text ml={2} fontSize="xl">Quick Todoer</Text>
             <TodoEditor />
         </HStack>
-        <TodoViewer />
+        <Box flex={1}>
+            <TodoViewer />
+        </Box>
         <Box overflow="hidden" accessibilityElementsHidden={!modalIsOpen} accessibilityViewIsModal={modalIsOpen}>
             <Text height="1px"> </Text>
             <TodoReEditModal />
@@ -104,7 +106,9 @@ const MainContainer = () => {
             <CheckListModal />
             <UserSettingsModal />
         </Box>
-        <InformationBar />
+        <Box mt={2}>
+            <InformationBar />
+        </Box>
     </VStack>;
 }
 

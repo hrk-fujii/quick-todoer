@@ -19,10 +19,10 @@ const InformationBar = () => {
         setUserInfo({name: ""})
     }
     
-    return <Box justifyContent="space-between" flexDirection="row">
-        <Text>{userInfoValue.name}さん</Text>
-        <Button onPress={hOpen} m={1}>ユーザー設定</Button>
-        <Button onPress={() => {hLogout()}} m={1}>ログアウト</Button>
+    return <Box alignItems="center" justifyContent="space-between" flexDirection="row">
+        <Text flex={1}>{userInfoValue.name}さん</Text>
+        <Button onPress={hOpen} m={2}>ユーザー設定</Button>
+        <Button onPress={() => {hLogout()}} m={2}>ログアウト</Button>
     </Box>
 }
 
