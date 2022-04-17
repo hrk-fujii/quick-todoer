@@ -4,10 +4,12 @@ import * as fireStore from "firebase/firestore";
 import * as firebaseAuth from "firebase/auth";
 import {useSetRecoilState, useRecoilState} from "recoil";
 import {modalData_TodoReEditModal, modalData_NoticeModalDialog, modalShow_TodoEditModal} from "../../defines/atoms";
+import {getErrorMessage} from "../../utils/errorMessage";
 
 
 const EditModal = () => {
     const [modalShow, setModalShow] = React.useState<boolean>(false);
+    const [isLoading, setIsLoading] = React.useState(false);
     const [modalData, setModalData] = useRecoilState(modalData_TodoReEditModal);
     const setNoticeDialog = useSetRecoilState(modalData_NoticeModalDialog);
     const [name, setName] = React.useState<string>("");
@@ -36,10 +38,18 @@ const EditModal = () => {
     const user = firebaseAuth.getAuth().currentUser;
 
     const hClose = () => {
-        setModalData({...modalData, show: false});
+        setModalData({
+            show: false,
+            name: "",
+            description: "",
+            deadlineAt: new Date(),
+            id: ""
+        });
+        setModalShow(false);
     }
     
     const hSubmit = async () => {
+        setIsLoading(true);
         const data = {
             name: name,
             description: description,
@@ -59,12 +69,13 @@ const EditModal = () => {
             setModalData({...modalData, show: false});
             setNoticeDialog({
                 show: true,
-                message: "やることの更新に失敗しました。インターネット接続をご確認のうえ、時間をおいて、再度試してみてください。",
+                message: getErrorMessage(error.toString()),
                 onClose: () => {
                     setModalData({...modalData, show: true});
                 }
             })
         }
+        setIsLoading(false);
     }
 
     if (deadline !== null) {
@@ -95,10 +106,10 @@ const EditModal = () => {
                 </Box>
             </Modal.Body>
             <Modal.Footer justifyContent="flex-end">
-                <Button onPress={hClose}>
+                <Button disabled={isLoading} onPress={hClose}>
                     中止
                 </Button>
-                <Button disabled={buttonDisabled} accessibilityState={{disabled: buttonDisabled}} onPress={hSubmit}>
+                <Button disabled={(buttonDisabled || isLoading)} accessibilityState={{disabled: (buttonDisabled || isLoading)}} onPress={hSubmit}>
                     決定
                 </Button>
             </Modal.Footer>

@@ -1,10 +1,11 @@
 import React from "react";
 import {Modal, Box, Input, Button, Text} from "native-base";
-import {useRecoilState} from "recoil";
-import {userInfo, modalShow_UserSettingsModal} from "../../defines/atoms";
+import {useSetRecoilState, useRecoilState} from "recoil";
+import {modalData_NoticeModalDialog, userInfo, modalShow_UserSettingsModal} from "../../defines/atoms";
 import * as firebaseAuth from "firebase/auth";
 import * as fireStore from "firebase/firestore";
 import * as firebaseFunctions from "firebase/functions";
+import {getErrorMessage} from "../../utils/errorMessage";
 
 const UserSettingsModal = () => {
     const [password, setPassword] = React.useState<string>("");
@@ -15,21 +16,19 @@ const UserSettingsModal = () => {
 
     const [modalShow, setModalShow] = useRecoilState(modalShow_UserSettingsModal);
     const [getUserInfo, setUserInfo] = useRecoilState(userInfo);
+    const setNoticeModalData = useSetRecoilState(modalData_NoticeModalDialog);
 
     const auth = firebaseAuth.getAuth();
     const db = fireStore.getFirestore();
     const functions = firebaseFunctions.getFunctions();
     const userDoc = fireStore.doc(db, "users/" + auth.currentUser?.uid);
-    
-    React.useEffect(() => {
+        
+    const hClose = () => {
         setEmail("");
         setPassword("");
         setNewPassword("");
         setConfirmNewPassword("");
-    }, [modalShow])
-    
-    const hClose = () => {
-        setModalShow(false);
+        // setModalShow(false);
     }
     
     const hChange = async () => {
@@ -54,7 +53,12 @@ const UserSettingsModal = () => {
                 auth.signOut();
             }
         } catch (error) {
-            console.log(error.toString());
+            setModalShow(false);
+            setNoticeModalData({
+                show: true,
+                message: getErrorMessage(error.toString()),
+                onClose: () => {setModalShow(true)}
+            });
         }
     }
     

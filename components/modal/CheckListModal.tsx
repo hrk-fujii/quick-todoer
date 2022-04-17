@@ -5,7 +5,7 @@ import {useSetRecoilState, useRecoilState} from "recoil";
 import { Box, Text, Modal, Button, Checkbox, ScrollView } from "native-base";
 import {modalData_NoticeModalDialog, modalData_CheckListModal} from "../../defines/atoms";
 import {checkListItem} from "../../defines/types";
-import { ItemClick } from "native-base/lib/typescript/components/composites/Typeahead/useTypeahead/types";
+import {getErrorMessage} from "../../utils/errorMessage";
 
 const CheckListModal = (props: {id: string; name: string;}) => {
     const db = fireStore.getFirestore();
@@ -28,6 +28,14 @@ const CheckListModal = (props: {id: string; name: string;}) => {
         }, hChangeCheckList, (error) => {console.log(error)});
     }, [modalData]);
 
+    const hClose = () => {
+        setModalData({
+            id: "",
+            name: "",
+            show: false
+        })
+    }
+    
     const hNewItem = () => {
         const checkListCollectionRef = fireStore.collection(db, "users/" + user?.uid + "/tasks/" + modalData.id + "/check_list");
         try {
@@ -38,7 +46,10 @@ const CheckListModal = (props: {id: string; name: string;}) => {
                 createdAt: fireStore.serverTimestamp()
             });
         } catch (error) {
-            setNoticeDialogData({show: true, message: "チェックリストの更新に失敗しました。時間をおいて、再度試してみてください。"});
+            setModalData({...modalData, show: false});
+            setNoticeDialogData({show: true, message: getErrorMessage(error.toString()),
+                onClose: () => {setModalData({...modalData, show: true})}
+            });
         }
     }
     
@@ -50,7 +61,10 @@ const CheckListModal = (props: {id: string; name: string;}) => {
                 await transaction.delete(documentRef);
             });
         } catch (error) {
-            setNoticeDialogData({show: true, message: "チェックリストの更新に失敗しました。時間をおいて、再度試してみてください。", onClose: ()=>{}});
+            setModalData({...modalData, show: false});
+            setNoticeDialogData({show: true, message: getErrorMessage(error.toString()),
+                onClose: ()=>{setModalData({...modalData, show: true})}
+            });
         }
         setIsLoading(false);
     }
@@ -127,7 +141,10 @@ const CheckListModal = (props: {id: string; name: string;}) => {
                 });
             });
         } catch (error) {
-            setNoticeDialogData({show: true, message: "チェック状態を保存できませんでした。時間をおいて、再度試してみてください。", onClose: ()=>{}});
+            setModalData({...modalData, show: false});
+            setNoticeDialogData({show: true, message: getErrorMessage(error.toString()),
+                onClose: ()=>{setModalData({...modalData, show: true})}
+            });
         }
         setChanged({});
         setIsLoading(false);
@@ -150,6 +167,9 @@ const CheckListModal = (props: {id: string; name: string;}) => {
                     テスト値追加
                 </Button>
                 <Button isDisabled={isLoading} onPress={hApplyChange} m={2}>
+                    変更を保存
+                </Button>
+                <Button isDisabled={isLoading} onPress={hClose} m={2}>
                     変更を保存
                 </Button>
             </Modal.Footer>

@@ -5,6 +5,7 @@ import { Box, HStack, Text, Button } from "native-base";
 import { task } from "../../defines/types";
 import {useSetRecoilState} from "recoil";
 import {modalData_TodoDetailModal, modalData_CheckListModal, modalData_NoticeModalDialog} from "../../defines/atoms";
+import {getErrorMessage} from "../../utils/errorMessage";
 
 const Todo = (props: {data: task; id: string;}) => {
     const setDetailModal = useSetRecoilState(modalData_TodoDetailModal);
@@ -25,7 +26,7 @@ const Todo = (props: {data: task; id: string;}) => {
                 }
             });
         } catch (error) {
-            setNoticeDialog({show: true, message: "処理に失敗しました。時間をおいて、再度試してみてください。"});
+            setNoticeDialog({show: true, message: getErrorMessage(error.toString()), onClose: ()=>{}});
         }
     }
 

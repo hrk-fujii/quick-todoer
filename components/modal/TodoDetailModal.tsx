@@ -5,6 +5,7 @@ import * as fireStore from "firebase/firestore";
 import {Modal, Text, Button} from "native-base";
 import {useSetRecoilState, useRecoilState} from "recoil";
 import {modalData_TodoReEditModal, modalData_NoticeModalDialog, modalData_YesNoModalDialog, modalData_TodoDetailModal} from "../../defines/atoms";
+import {getErrorMessage} from "../../utils/errorMessage";
 
 const TodoDetailModal = () => {
     const [data, setData] = useRecoilState(modalData_TodoDetailModal);
@@ -34,7 +35,7 @@ const TodoDetailModal = () => {
                     const recursiveDeleteFunction = firebaseFunctions.httpsCallable(functions, "fireStoreFunctions-recursiveDelete");
                     await recursiveDeleteFunction({path: docPath});
                 } catch (error) {
-                    setNoticeDialogData({show: true, message: "削除に失敗しました。時間をおいて、再度試してみたください。", onClose:()=>{}})
+                    setNoticeDialogData({show: true, message: getErrorMessage(error.toString()), onClose: ()=>{}});
                 }
                 setYesNoDialogData({...yesNoDialogData, show: false, processing: false});
             },
