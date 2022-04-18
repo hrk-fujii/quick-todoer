@@ -6,6 +6,7 @@ import {Modal, Text, Button} from "native-base";
 import {useSetRecoilState, useRecoilState} from "recoil";
 import {modalData_TodoReEditModal, modalData_NoticeModalDialog, modalData_YesNoModalDialog, modalData_TodoDetailModal} from "../../defines/atoms";
 import {getErrorMessage} from "../../utils/errorMessage";
+import { Firestore } from "firebase/firestore";
 
 const TodoDetailModal = () => {
     const [data, setData] = useRecoilState(modalData_TodoDetailModal);
@@ -46,6 +47,23 @@ const TodoDetailModal = () => {
         })
     }
 
+    const hStatusReset = async () => {
+        if (!(data.id)) {
+            return;
+        }
+        setData({...data, show: false});
+        const dataRef = fireStore.doc(db, "users/" + user?.uid + "/tasks/" + data.id);
+        try {
+            fireStore.runTransaction(db, async (transaction) => {
+                transaction.update(dataRef, {status: "yet"});
+            });
+        } catch (error) {
+            setNoticeDialogData({show: true, message: getErrorMessage(error.toString()), onClose: () => {
+                setData({...data, show: true});
+            }})
+        }
+    }
+    
     const hEdit = () => {
         setData({...data, show: false});
         setTodoReEditModal({
@@ -74,7 +92,7 @@ const TodoDetailModal = () => {
                 <Button onPress={hDelete} m={2}>
                     消去
                 </Button>
-                <Button accessibilityState={{disabled: (data.status === "yet")}} disabled={data.status === "yet"} m={2}>
+                <Button onPress={hStatusReset} accessibilityState={{disabled: (data.status === "yet")}} disabled={data.status === "yet"} m={2}>
                     未着手
                 </Button>
                 <Button onPress={hEdit} m={2}>
