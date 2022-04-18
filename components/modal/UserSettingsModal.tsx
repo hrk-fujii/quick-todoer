@@ -13,6 +13,7 @@ const UserSettingsModal = () => {
     const [email, setEmail] = React.useState<string>("");
     const [newPassword, setNewPassword] = React.useState<string>("");
     const [confirmNewPassword, setConfirmNewPassword] = React.useState<string>("");
+    const [loading, setLoading] = React.useState<boolean>(false);
 
     const [modalShow, setModalShow] = useRecoilState(modalShow_UserSettingsModal);
     const [getUserInfo, setUserInfo] = useRecoilState(userInfo);
@@ -38,10 +39,12 @@ const UserSettingsModal = () => {
         emailRef.current?.clear();
         newPasswordRef.current?.clear();
         confirmNewPasswordRef.current?.clear();
+        setLoading(false);
         setModalShow(false);
     }
     
     const hChange = async () => {
+        setLoading(true);
         try {
             if (name) {
                 await fireStore.runTransaction(db, async (transaction) => {
@@ -69,6 +72,8 @@ const UserSettingsModal = () => {
                 message: getErrorMessage(error.toString()),
                 onClose: () => {setModalShow(true)}
             });
+        } finally {
+            setLoading(false);
         }
     }
     
@@ -90,7 +95,7 @@ const UserSettingsModal = () => {
                     <Input ref={confirmNewPasswordRef} placeholder="パスワードの確認" type="password" onChangeText={(text) => {setConfirmNewPassword(text)}} />
                 </Box>
                 <Box alignItems="flex-end" mt={2}>
-                    <Button onPress={() => {hChange()}} width="100px">
+                    <Button disabled={loading} accessibilityState={{disabled: loading}} onPress={() => {hChange()}} width="100px">
                         変更を適用
                     </Button>
                 </Box>
@@ -98,7 +103,7 @@ const UserSettingsModal = () => {
                     <Text>3. QuickTodoerから退会するには「データを消去して退会」をタップしてください。なお、この操作を実行するとこのアプリ内のあなたのデータがすべて消去され、元に戻せなくなります。</Text>
                 </Box>
                 <Box alignItems={"flex-end"} mt={1}>
-                    <Button width="200px">
+                    <Button disabled={loading} accessibilityState={{disabled: loading}} width="200px">
                         データを消去して退会
                     </Button>
                 </Box>
