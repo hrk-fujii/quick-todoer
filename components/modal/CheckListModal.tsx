@@ -2,7 +2,7 @@ import React from "react";
 import * as fireStore from "firebase/firestore";
 import * as firebaseAuth from "firebase/auth";
 import {useSetRecoilState, useRecoilState} from "recoil";
-import { Box, Text, Modal, Button, Checkbox, ScrollView } from "native-base";
+import { HStack, Box, Input, Text, Modal, Button, Checkbox, ScrollView } from "native-base";
 import {modalData_NoticeModalDialog, modalData_CheckListModal} from "../../defines/atoms";
 import {checkListItem} from "../../defines/types";
 import {getErrorMessage} from "../../utils/errorMessage";
@@ -150,27 +150,29 @@ const CheckListModal = (props: {id: string; name: string;}) => {
         setIsLoading(false);
     }
 
-    return <Modal isOpen={modalData.show}>
+    return <Modal size="full" isOpen={modalData.show}>
         <Modal.Content>
             <Modal.Header>
                 チェックリスト
             </Modal.Header>
             <Modal.Body>
-                <ScrollView flex={1}>
+                <ScrollView height="400px" m={2}>
                     {checkedListProps}
-                    <Text>UNCHECKED</Text>
                     {unCheckedListProps}
                 </ScrollView>
+                <HStack>
+                    <Input flex={1} />
+                    <Button onPress={hNewItem} disabled={isLoading} accessibilityState={{disabled: isLoading}} accessibilityLabel="追加" ml={2}>
+                        +
+                    </Button>
+                </HStack>
             </Modal.Body>
             <Modal.Footer>
-                <Button isDisabled={isLoading} onPress={hNewItem} m={2}>
-                    テスト値追加
-                </Button>
                 <Button isDisabled={isLoading} onPress={hApplyChange} m={2}>
                     変更を保存
                 </Button>
                 <Button isDisabled={isLoading} onPress={hClose} m={2}>
-                    変更を保存
+                    閉じる
                 </Button>
             </Modal.Footer>
         </Modal.Content>
