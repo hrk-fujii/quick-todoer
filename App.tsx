@@ -1,4 +1,5 @@
 import React from 'react';
+import * as notifications from "expo-notifications";
 import {SSRProvider} from "@react-aria/ssr";
 import {RecoilRoot} from "recoil";
 import { extendTheme, NativeBaseProvider, Box } from "native-base";
@@ -46,6 +47,7 @@ const customTheme = extendTheme({
 function App() {
   const [authorized, setAuthorized] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [notificationRequesting, setNotificationRequesting] = React.useState<boolean>(false);
   const [signup, setSignup] = React.useState<boolean>(false);
   
   const auth = firebaseAuth.getAuth();
@@ -59,11 +61,25 @@ function App() {
     }
   });
 
+  const requestNotificationPermission = async (): void => {
+    const result = await notifications.getPermissionsAsync();
+    if (result.granted) {
+      setNotificationRequesting(false);
+    } else {
+      await notifications.requestPermissionsAsync();
+      setNotificationRequesting(false);
+    }
+  }
+  
+  React.useEffect(() => {
+    requestNotificationPermission();
+  })
+
   return <SSRProvider>
     <NativeBaseProvider theme={customTheme}>
       <RecoilRoot>
         <Box flex={1} _dark={{bg: "black"}}>
-          {authorized ? ( isLoading ? <Loading /> : <MainContainer /> ) : ( signup ? <Signup setSignup={()=>{setSignup(false)}}/> : <Signin setSignup={()=>{setSignup(true)}}/> )}
+          {authorized ? ( (isLoading || notificationRequesting) ? <Loading /> : <MainContainer /> ) : ( signup ? <Signup setSignup={()=>{setSignup(false)}}/> : <Signin setSignup={()=>{setSignup(true)}}/> )}
         </Box>
       </RecoilRoot>
     </NativeBaseProvider>
