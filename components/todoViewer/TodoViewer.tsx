@@ -1,9 +1,11 @@
 import React from "react";
+import * as notifications from "expo-notifications";
 import * as firebaseAuth from "firebase/auth";
 import * as fireStore from "firebase/firestore";
 import {task} from "../../defines/types";
 import {ScrollView} from "native-base";
 import Todo from "./Todo";
+import * as notificationUtils from "../../utils/notification";
 
 const TodoViewer = () => {
     const [tasks, setTasks] = React.useState<object>({});
@@ -11,11 +13,12 @@ const TodoViewer = () => {
     const user = firebaseAuth.getAuth().currentUser;
     const db = fireStore.getFirestore();
 
-    const hChangeTasks = (docs: fireStore.QuerySnapshot) => {
+    const hChangeTasks = async (docs: fireStore.QuerySnapshot) => {
         if (docs.metadata.hasPendingWrites) {
             return;
         }
 
+        await notifications.cancelAllScheduledNotificationsAsync();
         let setData = {};
         docs.forEach(element => {
             let todoData = element.data();
@@ -23,6 +26,10 @@ const TodoViewer = () => {
             todoData.updatedAt = todoData.updatedAt.toDate();
             todoData.createdAt = todoData.createdAt.toDate();
             setData[element.id] = todoData;
+            if (todoData.status !== "done") {
+                notificationUtils.setNotification(todoData.name, todoData.description, todoData.deadlineAt).
+                    then((result)=>{return}, (error)=>{return});
+            }
         });
         setTasks(setData);
     }
@@ -31,7 +38,13 @@ const TodoViewer = () => {
         const tasksRef = fireStore.collection(db, "users/" + user?.uid + "/tasks");
         const unSubscribe = fireStore.onSnapshot(tasksRef, {
             includeMetadataChanges: true
-        }, hChangeTasks, (error) => {console.log(error)});
+        }, (element) => {
+            hChangeTasks(element).then((value) => {
+                return;
+            }, (error) => {
+                return;
+            });
+        }, (error) => {return});
     }, []);
     
     let todoList: React.FC[] = [];
